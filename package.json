@@ -1,0 +1,16 @@
+{
+  "name": "ts-basics",
+  "version": "1.0.0",
+  "description": "Навчальний TypeScript-проєкт",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "ts-node src/index.ts"
+  },
+  "devDependencies": {
+        "ts-node": "^9.0.2",
+    "typescript": "^5.6.0",
+    "@types/node": "^22.0.0"
+  }
+}
