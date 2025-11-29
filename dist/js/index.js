@@ -1,11 +1,15 @@
-// Типи
-type JsonPhoto = {
-    url: string;
-    title: string;
+"use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
 };
-
 // Інжект стилів
-function injectStyles(): void {
+function injectStyles() {
     const style = document.createElement("style");
     style.textContent = `
         /* ----- MODAL ------ */
@@ -83,39 +87,28 @@ function injectStyles(): void {
     `;
     document.head.appendChild(style);
 }
-
 injectStyles();
-
-async function loadPhoto(id: number): Promise<JsonPhoto> {
-    const response = await fetch(
-        "https://jsonplaceholder.typicode.com/photos/" + id
-    );
-
-    if (!response.ok) {
-        throw new Error("HTTP error");
-    }
-
-    const data: JsonPhoto = await response.json();
-
-    if (typeof data.url !== "string" || typeof data.title !== "string") {
-        throw new Error("Некоректний формат JSON");
-    }
-
-    console.log(data);
-
-    return data;
+function loadPhoto(id) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const response = yield fetch("https://jsonplaceholder.typicode.com/photos/" + id);
+        if (!response.ok) {
+            throw new Error("HTTP error");
+        }
+        const data = yield response.json();
+        if (typeof data.url !== "string" || typeof data.title !== "string") {
+            throw new Error("Некоректний формат JSON");
+        }
+        console.log(data);
+        return data;
+    });
 }
-
 // ----- MODАЛКА -----
-async function openModal(
-    imgSrc: string,
-    titleText: string,
-    apiId: number
-): Promise<void> {
-    const modal = document.createElement("div");
-    modal.className = "modal";
-
-    modal.innerHTML = `
+function openModal(imgSrc, titleText, apiId) {
+    return __awaiter(this, void 0, void 0, function* () {
+        var _a;
+        const modal = document.createElement("div");
+        modal.className = "modal";
+        modal.innerHTML = `
         <div class="modal-content">
             <span class="close-btn">&times;</span>
             <img src="${imgSrc}" class="modal-img" />
@@ -123,71 +116,58 @@ async function openModal(
             <p id="json-text">Завантаження...</p>
         </div>
     `;
-
-    document.body.appendChild(modal);
-
-    const modalContent = modal.querySelector(".modal-content") as HTMLElement;
-    const textField = modal.querySelector("#json-text") as HTMLElement;
-
-    requestAnimationFrame(() => {
-        modal.classList.add("show");
-        modalContent.classList.add("show");
+        document.body.appendChild(modal);
+        const modalContent = modal.querySelector(".modal-content");
+        const textField = modal.querySelector("#json-text");
+        requestAnimationFrame(() => {
+            modal.classList.add("show");
+            modalContent.classList.add("show");
+        });
+        const close = () => {
+            modal.classList.remove("show");
+            modalContent.classList.remove("show");
+            setTimeout(() => modal.remove(), 180);
+        };
+        modal.onclick = (e) => {
+            if (e.target === modal)
+                close();
+        };
+        (_a = modal.querySelector(".close-btn")) === null || _a === void 0 ? void 0 : _a.addEventListener("click", close);
+        try {
+            const data = yield loadPhoto(apiId);
+            textField.innerText = data.title;
+        }
+        catch (_b) {
+            textField.innerText = "Помилка завантаження.";
+        }
     });
-
-    const close = () => {
-        modal.classList.remove("show");
-        modalContent.classList.remove("show");
-        setTimeout(() => modal.remove(), 180);
-    };
-
-    modal.onclick = (e) => {
-        if (e.target === modal) close();
-    };
-    modal.querySelector(".close-btn")?.addEventListener("click", close);
-
-    try {
-        const data = await loadPhoto(apiId);
-        textField.innerText = data.title;
-    } catch {
-        textField.innerText = "Помилка завантаження.";
-    }
 }
-
 // ----- Клік по фоткам -----
-const images = document.querySelectorAll(
-    ".info-image"
-) as NodeListOf<HTMLImageElement>;
-
+const images = document.querySelectorAll(".info-image");
 images.forEach((img, index) => {
     const flipClass = index % 2 === 0 ? "flip-left" : "flip-right";
     img.classList.add("flip-hidden", flipClass);
-
     img.addEventListener("click", () => {
-        const parent = img.closest(".grid-column") as HTMLElement;
-        const title =
-            parent?.nextElementSibling?.querySelector("h3")?.textContent ||
-            parent?.previousElementSibling?.querySelector("h3")?.textContent ||
+        var _a, _b, _c, _d;
+        const parent = img.closest(".grid-column");
+        const title = ((_b = (_a = parent === null || parent === void 0 ? void 0 : parent.nextElementSibling) === null || _a === void 0 ? void 0 : _a.querySelector("h3")) === null || _b === void 0 ? void 0 : _b.textContent) ||
+            ((_d = (_c = parent === null || parent === void 0 ? void 0 : parent.previousElementSibling) === null || _c === void 0 ? void 0 : _c.querySelector("h3")) === null || _d === void 0 ? void 0 : _d.textContent) ||
             "Title";
-
         openModal(img.src, title, index + 1);
     });
 });
-
 // ----- SCROLL FLIP -----
 // показує при скролі вниз, ховає при скролі вверх
-function revealFlip(): void {
+function revealFlip() {
     images.forEach((img) => {
         const rect = img.getBoundingClientRect();
-
         if (rect.top < window.innerHeight - 100) {
             img.classList.add("flip-visible");
         }
-
         if (rect.bottom < 0 || rect.top > window.innerHeight) {
             img.classList.remove("flip-visible");
         }
     });
 }
-
 window.addEventListener("scroll", revealFlip);
 revealFlip();

@@ -1,6 +1,3 @@
 # TypeScript Basics Project
 
-Цей репозиторій демонструє базове налаштування проєкту на TypeScript.
-
-- Дві основні гілки: `main` (базова) та `develop` (робоча).
-- Компіляція коду з директорії `src` до `dist`.
+[шаблон](https://www.papayatemplates.com/chippewa/)
