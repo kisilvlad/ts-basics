@@ -246,6 +246,14 @@ function demo(): void {
     );
   }
   try {
+    system.registerForCourse(st1.id, course1.id);
+  } catch (error) {
+    console.error(
+      "Error registering for course:",
+      error instanceof Error ? error.message : error
+    );
+  }
+  try {
     system.registerForCourse(st1.id, course3.id);
   } catch (error) {
     console.error(
